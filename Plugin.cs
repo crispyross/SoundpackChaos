@@ -55,15 +55,10 @@ class GameControllerPatch
     [HarmonyPatch(nameof(GameController.playNote))]
     static void BeforeNote(GameController __instance)
     {
-        var self = __instance;
         if (Plugin.Enabled.Value)
         {
-            var soundpacks = Soundpack.GetAll().AsEnumerable();
-            if (!Plugin.IncludeVanilla.Value)
-                soundpacks = soundpacks.Where(s => !s.IsVanilla);
-            self.ChangeSoundpack(soundpacks.GetRandom());
+            var packs = Plugin.IncludeVanilla.Value ? SoundpackManager.GetAllPacks() : SoundpackManager.GetCustomPacks();
+            SoundpackManager.ChangePack(__instance, packs.GetRandom());
         }
     }
-
-
 }
